@@ -1,4 +1,3 @@
-//glsl
 // FOR OPTIMIZATION, FROM http://theorangeduck.com/page/avoiding-shader-conditionals
 // 
 vec4 when_eq(vec4 x, vec4 y) {
@@ -25,12 +24,16 @@ float when_gt(float x, float y){
   return max(sign(x - y), 0.0);
 }
 
+float when_lt(float x, float y) {
+  return max(sign(y - x), 0.0);
+}
+
 vec4 when_lt(vec4 x, vec4 y) {
   return max(sign(y - x), 0.0);
 }
 
-float when_lt(float x, float y) {
-  return max(sign(y - x), 0.0);
+float when_ge(float x, float y) {
+  return 1.0 - when_lt(x, y);
 }
 
 vec4 when_ge(vec4 x, vec4 y) {
@@ -39,6 +42,10 @@ vec4 when_ge(vec4 x, vec4 y) {
 
 vec4 when_le(vec4 x, vec4 y) {
   return 1.0 - when_gt(x, y);
+}
+
+float and(float a, float b) {
+  return a * b;
 }
 
 vec4 and(vec4 a, vec4 b) {
