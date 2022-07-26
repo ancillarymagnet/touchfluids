@@ -69,13 +69,18 @@ float jacobi(int pInput, int dInput){
 	// adjacent pressure samples
 	// mac users are getting an error here due to the use of variables for the lookup offset
 	// still looking for a fix but the brute force way is to rewrite this whole jacobi method longhand
-  	float pL = textureOffset(sTD2DInputs[pInput], vUV.st, ivec2(oL.x, oL.y)).r;
-  	float pR = textureOffset(sTD2DInputs[pInput], vUV.st, ivec2(oR.x, oR.y)).r;
-  	float pB = textureOffset(sTD2DInputs[pInput], vUV.st, ivec2(oB.x, oB.y)).r;
-  	float pT = textureOffset(sTD2DInputs[pInput], vUV.st, ivec2(oT.x, oT.y)).r;
+	ivec2 coord = GetUVAsPixelCoord(vUV.st);
+	float pL = texelFetch(sTD2DInputs[pInput], coord + ivec2(oL.x, oL.y), 0).r;
+  	float pR = texelFetch(sTD2DInputs[pInput], coord +  ivec2(oR.x, oR.y), 0).r;
+  	float pB = texelFetch(sTD2DInputs[pInput], coord +  ivec2(oB.x, oB.y), 0).r;
+  	float pT = texelFetch(sTD2DInputs[pInput], coord +  ivec2(oT.x, oT.y), 0).r;
+  	// float pL = textureOffset(sTD2DInputs[pInput], vUV.st, ivec2(oL.x, oL.y)).r;
+  	// float pR = textureOffset(sTD2DInputs[pInput], vUV.st, ivec2(oR.x, oR.y)).r;
+  	// float pB = textureOffset(sTD2DInputs[pInput], vUV.st, ivec2(oB.x, oB.y)).r;
+  	// float pT = textureOffset(sTD2DInputs[pInput], vUV.st, ivec2(oT.x, oT.y)).r;
   
   	// b (DIVERGENCE) sample, from center
-  	float bC = textureOffset(sTD2DInputs[dInput], vUV.st, ivec2(oC.x, oC.y)).r;
+  	float bC = texelFetch(sTD2DInputs[dInput], coord + ivec2(oC.x, oC.y), 0).r;
 
 	return (pL + pR + pB + pT - alpha * bC) * rBeta;
 }
@@ -119,7 +124,8 @@ vec4 boundaryEnforced(int xInput){
 	// scale is 1 unless it's an edge, in which case it's the uniform value uScale
 	scale += uScale * or( when_neq(x,0), when_neq(y,0) ) - when_neq(x,0);
 
-	return scale * textureOffset(sTD2DInputs[xInput], vUV.st, offset);
+	ivec2 coord = GetUVAsPixelCoord(vUV.st);
+	return scale * texelFetch(sTD2DInputs[xInput],coord + offset, 0);
 }
 
 

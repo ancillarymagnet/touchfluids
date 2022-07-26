@@ -9,12 +9,19 @@ struct EdgeCases
   float Left, Right, Bottom, Top; 
 };
 
+ivec2 GetUVAsPixelCoord(vec2 uv)
+{
+  vec2 res = uTD2DInfos[0].res.zw;
+  return ivec2(uv * res);
+}
+
 NeighborSamples texFetchNeighbors(int texInput)
 {
-  vec4 left = textureOffset(sTD2DInputs[texInput], vUV.st, ivec2(-1, 0));
-  vec4 right = textureOffset(sTD2DInputs[texInput], vUV.st, ivec2(1, 0));
-  vec4 bottom = textureOffset(sTD2DInputs[texInput], vUV.st, ivec2(0,-1));
-  vec4 top = textureOffset(sTD2DInputs[texInput], vUV.st, ivec2(0, 1));
+  ivec2 coord = GetUVAsPixelCoord(vUV.st);
+  vec4 left = texelFetch(sTD2DInputs[texInput], coord + ivec2(-1, 0), 0);
+  vec4 right = texelFetch(sTD2DInputs[texInput], coord + ivec2(1, 0), 0);
+  vec4 bottom = texelFetch(sTD2DInputs[texInput], coord + ivec2(0, -1), 0);
+  vec4 top = texelFetch(sTD2DInputs[texInput], coord + ivec2(0, 1), 0);
   return NeighborSamples(left, right, bottom, top);
 }
 
